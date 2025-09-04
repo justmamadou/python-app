@@ -1,0 +1,38 @@
+
+replicaCount: 1
+
+image:
+  repository: mamadoudev/python-app
+  pullPolicy: IfNotPresent
+  tag: "v1"
+
+deployment:
+  name: python-app
+
+labels:
+  app: python-app
+
+service:
+  name: python-app-service
+  type: ClusterIP
+  port: 8080
+  targetPort: 5000
+
+ports:
+  - name: http
+    containerPort: 5000
+
+Ingress:
+  name: python-app-ingress
+  enabled: true
+  className: "nginx"
+  hosts:
+    - host: "*"
+      paths:
+        - path: /
+          pathType: Prefix
+          backend:
+            service:
+              name: python-app-service
+              port:
+                number: 8080
