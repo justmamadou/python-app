@@ -18,14 +18,14 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - 
-        name: Set short git commit SHA
-        id: vars
+        name: Declare some variables
+        shell: bash
         run: |
-          calculatedSha=$(git rev-parse --short ${{ github.sha }})
-          echo "COMMIT_SHORT_SHA=$calculatedSha" >> $GITHUB_ENV
+          echo "sha_short=${GITHUB_SHA::6}" >> "$GITHUB_ENV"
+
       -
         name: Build and push
         uses: docker/build-push-action@v6
         with:
           push: true
-          tags: mamadoudev/python-app:${{ env.COMMIT_SHORT_SHA }}
+          tags: mamadoudev/python-app:${{ env.sha_short }}
