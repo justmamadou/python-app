@@ -29,3 +29,19 @@ jobs:
         with:
           push: true
           tags: mamadoudev/python-app:${{ env.sha_short }}
+
+  deploy:
+    runs-on: self-hosted
+    steps:
+      - 
+        name: Install ArgoCD CLI
+        run: |
+          curl -sSL -o argocd https://github.com/argoproj/argo-cd/releases/latest/download/argocd-linux-amd64
+          chmod +x argocd
+          sudo mv argocd /usr/local/bin/argocd
+      -
+        name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ vars.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
