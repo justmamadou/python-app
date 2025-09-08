@@ -32,8 +32,21 @@ jobs:
 
   deploy:
     runs-on: self-hosted
+    needs: Build_and_Push
     steps:
-      -
-        name: Login to ArgoCD
+      - 
+        name: Install ArgoCD CLI
         run: |
-          argocd login ${{ secrets.ARGOCD_SERVER }} --insecure --grpc-web --username ${{ secrets.ARGOCD_USERNAME }} --password ${{ secrets.ARGOCD_PASSWORD }}
+          curl -sSL -o argocd https://github.com/argoproj/argo-cd/releases/latest/download/argocd-linux-amd64
+          chmod +x argocd
+          sudo mv argocd /usr/local/bin/argocd
+      - name: Login to ArgoCD
+        run: |
+          argocd login argocd-server.argocd.svc.cluster.local \
+          --insecure \
+          --grpc-web \
+          --username admin \ 
+          --password ${{ secrets.ARGOCD_PASSWORD }}
+      - name: Sync Application
+        run: |
+          argocd app sync python-app
