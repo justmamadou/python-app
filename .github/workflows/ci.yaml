@@ -41,6 +41,7 @@ jobs:
           chmod +x argocd
           sudo mv argocd /usr/local/bin/argocd
       - name: Login to ArgoCD
+        shell: bash
         run: |
           argocd login argocd-server.argocd.svc.cluster.local \
           --insecure \
@@ -48,5 +49,6 @@ jobs:
           --username admin \ 
           --password ${{ secrets.ARGOCD_PASSWORD }}
       - name: Sync Application
+        shell: bash
         run: |
           argocd app sync python-app
