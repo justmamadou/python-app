@@ -9,6 +9,8 @@ on:
 jobs:
   Build_and_Push:
     runs-on: ubuntu-latest
+    outputs:
+      commit_id: ${{ env.sha_short }}
     steps:
       -
         name: Login to Docker Hub
@@ -34,7 +36,21 @@ jobs:
     runs-on: self-hosted
     needs: Build_and_Push
     steps:
-      - 
+      - uses: actions/checkout@v2
+       
+      - name: Modify the k8s deployment file
+        shell: bash
+        run: |
+          echo ${{needs:Build_and_Push.outputs.commit_id}}
+          pip install yq
+          yq -Yi '.image.tag = "${{needs:Build_and_Push.outputs.commit_id}}"' charts/values.yaml
+
+      - name: Commit changes
+        uses: EndBug/add-and-commit@v9
+        with:
+          message: 'update image tag to ${{needs:Build_and_Push.outputs.commit_id}}'
+
+      -
         name: Install ArgoCD CLI
         run: |
           curl -sSL -o argocd https://github.com/argoproj/argo-cd/releases/latest/download/argocd-linux-amd64

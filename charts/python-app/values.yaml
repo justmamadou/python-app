@@ -4,7 +4,7 @@ replicaCount: 1
 image:
   repository: mamadoudev/python-app
   pullPolicy: IfNotPresent
-  tag: "v1"
+  tag: v1
 
 deployment:
   name: python-app
